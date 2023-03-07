@@ -1,7 +1,6 @@
 package view;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 
 import javafx.animation.KeyFrame;
@@ -53,6 +52,7 @@ public class SteinerTree extends Application {
     private ArrayList<Node> nodes;
     private ArrayList<Edge> edges;
     private ArrayList<Edge> solution;
+    private ArrayList<Integer> nodesToConnect;
 
     // Timer
     private Timeline timeline;
@@ -69,6 +69,7 @@ public class SteinerTree extends Application {
         this.nodes = game.getNodes();
         this.edges = game.getEdges();
         this.solution = game.getSolution();
+        this.nodesToConnect = game.getNodesToConnect();
     }
 
     /**
@@ -209,7 +210,6 @@ public class SteinerTree extends Application {
         gc.setLineWidth(1);
 
         // draw nodes
-        ArrayList<Integer> nodesToConnect = new ArrayList<>(Arrays.asList(1, 4, 8, 12, 13));
         for (int i = 0; i < nodes.size(); i++) {
             double x = nodes.get(i).getX();
             double y = nodes.get(i).getY();
@@ -309,7 +309,7 @@ public class SteinerTree extends Application {
             edgesToBeChosen.get(FIRSTEDGE).setTipp(true);
             tippOn = true;
             messageLabel.setText(Message.ADDEDGE.getMessage());
-        } else if (edgesToBeChosen.size() == 0) {
+        } else if (edgesToBeChosen.size() == 0 && edgesToBeRemoved.size() != 0) {
             Collections.shuffle(edgesToBeRemoved);
             edgesToBeRemoved.get(FIRSTEDGE).setTipp(true);
             tippOn = true;
@@ -373,7 +373,7 @@ public class SteinerTree extends Application {
                 nodesFound--;
             }
         }
-        if (nodesFound == 8) {
+        if (nodesFound == solution.size()) {
             return true;
         }
         return false;

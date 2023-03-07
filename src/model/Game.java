@@ -6,12 +6,16 @@ public class Game {
     private ArrayList<Node> nodes = new ArrayList<>();
     private ArrayList<Edge> edges = new ArrayList<>();
 
+    private ArrayList<Integer> nodesToConnect = new ArrayList<>();
     private ArrayList<Edge> solution = new ArrayList<>();
+
+    private ArrayList<String[]> levels = new ArrayList<>();
 
     public void instanceGame() {
         instanceNodes();
         instanceEdges();
-        setSolution();
+        instanceLevels();
+        // setSolution();
     }
 
     private void instanceNodes() {
@@ -67,7 +71,32 @@ public class Game {
         // }
     }
 
+    private void instanceLevels() {
+        final int NUMBEROFLEVELS = 1;
+        for (int i = 0; i < NUMBEROFLEVELS; i++) {
+            levels.add(new TextFileReader().loadTextFile(String.format("level%d", i+1)));
+        }
+
+        for (String[] level : levels) {
+            boolean nodesIndezes = true;
+            for (int i = 0; i < level.length; i++) {
+                String line = level[i];
+
+                if (!line.equals("-")) {
+                    if (nodesIndezes) {
+                        nodesToConnect.add(Integer.parseInt(line));
+                    } else {
+                        solution.add(edges.get(Integer.parseInt(line)));
+                    }
+                } else {
+                    nodesIndezes = false;
+                }
+            }
+        }
+    }
+
     private void setSolution() {
+
         solution.add(edges.get(1));
         solution.add(edges.get(6));
         solution.add(edges.get(9));
@@ -88,6 +117,14 @@ public class Game {
 
     public ArrayList<Edge> getSolution() {
         return solution;
+    }
+
+    public ArrayList<Integer> getNodesToConnect() {
+        return nodesToConnect;
+    }
+
+    public ArrayList<String[]> getLevels() {
+        return levels;
     }
 
 }
