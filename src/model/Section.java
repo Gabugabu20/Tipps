@@ -1,19 +1,14 @@
 package model;
 public enum Section {
-    OBEN, UNTEN, LINKS, RECHTS;
+    OBEN("OBEN"), UNTEN("UNTEN"), LINKS("LINKS"), RECHTS("RECHTS");
 
-    public static Section getSectionByName(String section) {
-        switch (section) {
-            case "LINKS":
-                return Section.LINKS;
-            case "RECHTS":
-                return Section.RECHTS;
-            case "OBEN":
-                return Section.OBEN;
-            case "UNTEN":
-                return Section.UNTEN;
-            default:
-                return null;
-        }
+    private String name;
+
+    private Section(String name){
+        this.name = name;
+    }
+
+    public String getName(){
+        return name;
     }
 }

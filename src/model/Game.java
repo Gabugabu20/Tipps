@@ -11,7 +11,6 @@ public class Game {
     public void instanceGame() {
         instanceNodes();
         instanceEdges();
-        setSections();
         setSolution();
     }
 
@@ -48,23 +47,6 @@ public class Game {
 
         // for (Edge edge : edges) {
         // System.out.println(edge.toString());
-        // }
-    }
-
-    private void setSections() {
-        String[] sections = new TextFileReader().loadTextFile("sections");
-        for (int i = 0; i < sections.length; i++) {
-            String section = sections[i];
-            int id = Integer.parseInt(section.substring(0, section.indexOf(":"))) - 1;
-            String section1 = section.substring(section.indexOf(":") + 1, section.indexOf(","));
-            String section2 = section.substring(section.indexOf(",") + 1, section.length());
-            edges.get(id).addSection(Section.getSectionByName(section1));
-            edges.get(id).addSection(Section.getSectionByName(section2));
-        }
-        // for (Edge edge : edges) {
-        // if (edge.getSections().contains(Section.LINKS)) {
-        // System.out.println(edge.toString());
-        // }
         // }
     }
 

@@ -6,12 +6,11 @@ public class Edge {
     private int id;
     private boolean selected;
     private boolean solution;
+    private boolean tipp;
     private Node node1;
     private Node node2;
 
     private int value;
-
-    private ArrayList<Section> sections = new ArrayList<>();
 
     public Edge(int id, Node node1, Node node2, int value) {
         this.id = id;
@@ -43,6 +42,14 @@ public class Edge {
         this.solution = solution;
     }
 
+    public boolean isTipp() {
+        return tipp;
+    }
+
+    public void setTipp(boolean tipp) {
+        this.tipp = tipp;
+    }
+
     public Node getNode1() {
         return node1;
     }
@@ -57,14 +64,6 @@ public class Edge {
 
     public void setNode2(Node node2) {
         this.node2 = node2;
-    }
-
-    public ArrayList<Section> getSections() {
-        return sections;
-    }
-
-    public void addSection(Section section) {
-        this.sections.add(section);
     }
 
     public int getValue() {
