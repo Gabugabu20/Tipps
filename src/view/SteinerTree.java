@@ -348,6 +348,7 @@ public class SteinerTree extends Application {
                 .ifPresent(obj -> obj.setTipp(false));
 
         tippOn = false;
+        messageLabel.setText("");
     }
 
     /**
