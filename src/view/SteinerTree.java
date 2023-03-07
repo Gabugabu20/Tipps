@@ -22,6 +22,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import model.Edge;
 import model.Game;
+import model.Message;
 import model.Node;
 
 /**
@@ -41,8 +42,10 @@ public class SteinerTree extends Application {
     private Label actualValueLabel;
     private Label valueLabel;
     private Label nodesLabel;
+    private Label timerTitleLabel;
     private Label timerLabel;
     private Label finishLabel;
+    private Label messageLabel;
     // Buttons
     private Button tippButton;
 
@@ -109,7 +112,7 @@ public class SteinerTree extends Application {
         updateValue();
 
         Pane root = new Pane(canvas, tippButton, actualValueLabel, valueLabel, nodesLabel,
-                timerLabel);
+                timerLabel, timerTitleLabel, messageLabel);
         Scene scene = new Scene(root, WIDTH, HEIGHT);
 
         primaryStage.setTitle("Steinerbaum");
@@ -123,25 +126,33 @@ public class SteinerTree extends Application {
      */
     private void initializeGUIElements() {
         actualValueLabel = new Label("Aktueller Wert:");
-        actualValueLabel.setLayoutX(150);
+        actualValueLabel.setLayoutX(20);
         actualValueLabel.setLayoutY(20);
 
         valueLabel = new Label();
-        valueLabel.setLayoutX(250);
+        valueLabel.setLayoutX(110);
         valueLabel.setLayoutY(20);
 
         nodesLabel = new Label("Diese Knoten zusammen verbinden: 1, 4, 8, 12, 13");
-        nodesLabel.setLayoutX(150);
-        nodesLabel.setLayoutY(50);
+        nodesLabel.setLayoutX(170);
+        nodesLabel.setLayoutY(20);
+
+        timerTitleLabel = new Label();
+        timerTitleLabel.setText("Zeit: ");
+        timerTitleLabel.setLayoutX(170);
+        timerTitleLabel.setLayoutY(60);
 
         timerLabel = new Label();
         timerLabel.setLayoutX(200);
-        timerLabel.setLayoutY(100);
+        timerLabel.setLayoutY(60);
+
+        messageLabel = new Label();
 
         tippButton = new Button("Tipp +" + getTimeAdmonition());
         tippButton.setLayoutX(20);
         tippButton.setLayoutY(60);
         tippButton.disableProperty().bind(Bindings.createBooleanBinding(() -> tippOn));
+        
     }
 
     /**
