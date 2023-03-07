@@ -258,9 +258,11 @@ public class SteinerTree extends Application {
      * @param event The event when the user presses the tipp button.
      */
     private void handleTippButtonPressed(ActionEvent event) {
+        final int TIMEADMONITIONSUMMAND = 15;
+
         // admonition time
         timeToAdd += timeAdmonition;
-        timeAdmonition += 15;
+        timeAdmonition += TIMEADMONITIONSUMMAND;
 
         // saves all the edges which need to be chosen
         ArrayList<Edge> edgesToBeChosen = new ArrayList<>();
