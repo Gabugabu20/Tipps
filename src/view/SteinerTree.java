@@ -1,5 +1,6 @@
 package view;
 
+import java.security.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -34,6 +35,7 @@ public class SteinerTree extends Application {
 
     private GraphicsContext gc;
     private Stage primaryStage;
+
     // GUI Elements
     // Labels
     private Label actualValueLabel;
@@ -51,7 +53,12 @@ public class SteinerTree extends Application {
     // Timer
     private Timeline timeline;
     private long startTime;
-    private long timeToAdd;
+    private long timeToAdd = 0;
+    private long timeAdmonition = 15;
+
+    // Canvas size
+    private final int WIDTH = 1200;
+    private final int HEIGHT = 800;
 
     public SteinerTree(Game game) {
         this.nodes = game.getNodes();
@@ -75,10 +82,11 @@ public class SteinerTree extends Application {
      * 
      * @param primaryStage the main stage of the game
      */
+
     @Override
     public void start(Stage primaryStage) {
         // initialize canvas and stage
-        Canvas canvas = new Canvas(600, 600);
+        Canvas canvas = new Canvas(WIDTH, HEIGHT);
         gc = canvas.getGraphicsContext2D();
         this.primaryStage = primaryStage;
 
@@ -101,7 +109,7 @@ public class SteinerTree extends Application {
 
         Pane root = new Pane(canvas, tippButton, actualValueLabel, valueLabel, nodesLabel,
                 timerLabel);
-        Scene scene = new Scene(root, 600, 600);
+        Scene scene = new Scene(root, WIDTH, HEIGHT);
 
         primaryStage.setTitle("Steinerbaum");
         primaryStage.setScene(scene);
@@ -129,7 +137,7 @@ public class SteinerTree extends Application {
         timerLabel.setLayoutX(200);
         timerLabel.setLayoutY(100);
 
-        tippButton = new Button("Tipp");
+        tippButton = new Button("Tipp +" + getTimeAdmonition());
         tippButton.setLayoutX(20);
         tippButton.setLayoutY(60);
     }
@@ -150,7 +158,7 @@ public class SteinerTree extends Application {
      * Draws the edges and nodes on the canvas.
      */
     private void drawCanvas() {
-        gc.clearRect(0, 0, 600, 600);
+        gc.clearRect(0, 0, WIDTH, HEIGHT);
 
         // set edge color
         gc.setStroke(Color.BLACK);
@@ -251,7 +259,8 @@ public class SteinerTree extends Application {
      */
     private void handleTippButtonPressed(ActionEvent event) {
         // admonition time
-        timeToAdd += 15;
+        timeToAdd += timeAdmonition;
+        timeAdmonition += 15;
 
         // saves all the edges which need to be chosen
         ArrayList<Edge> edgesToBeChosen = new ArrayList<>();
@@ -267,6 +276,9 @@ public class SteinerTree extends Application {
             Collections.shuffle(edgesToBeChosen);
             edgesToBeChosen.get(FIRSTEDGE).setTipp(true);
         }
+
+        // set tipp button text
+        tippButton.setText("Tipp +" + getTimeAdmonition());
 
         // redraw canvas
         drawCanvas();
@@ -330,14 +342,14 @@ public class SteinerTree extends Application {
      * Shows a new window with the score of the player (time).
      */
     private void showFinish() {
-        gc.clearRect(0, 0, 600, 600);
+        gc.clearRect(0, 0, WIDTH, HEIGHT);
 
         finishLabel = new Label("Your Score: " + this.timerLabel.getText());
         finishLabel.setLayoutX(270);
         finishLabel.setLayoutY(300);
 
         Pane root = new Pane(finishLabel);
-        Scene scene = new Scene(root, 600, 600);
+        Scene scene = new Scene(root, WIDTH, HEIGHT);
 
         primaryStage.setTitle("Steinerbaum");
         primaryStage.setScene(scene);
@@ -406,4 +418,9 @@ public class SteinerTree extends Application {
         return distance;
     }
 
+    private String getTimeAdmonition() {
+        long minutes = timeAdmonition / 60;
+        long seconds = timeAdmonition % 60;
+        return String.format("%dm %ds", minutes, seconds);
+    }
 }
