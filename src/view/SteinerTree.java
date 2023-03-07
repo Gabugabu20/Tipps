@@ -387,8 +387,8 @@ public class SteinerTree extends Application {
         gc.clearRect(0, 0, WIDTH, HEIGHT);
 
         finishLabel = new Label("Your Score: " + this.timerLabel.getText());
-        finishLabel.setLayoutX(270);
-        finishLabel.setLayoutY(300);
+        finishLabel.setLayoutX(WIDTH/2);
+        finishLabel.setLayoutY(HEIGHT/2);
 
         Pane root = new Pane(finishLabel);
         Scene scene = new Scene(root, WIDTH, HEIGHT);
