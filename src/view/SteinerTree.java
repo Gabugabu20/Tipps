@@ -45,6 +45,7 @@ public class SteinerTree extends Application {
     private Label timerTitleLabel;
     private Label timerLabel;
     private Label finishLabel;
+    private Label messageTitleLabel;
     private Label messageLabel;
     // Buttons
     private Button tippButton;
@@ -112,7 +113,7 @@ public class SteinerTree extends Application {
         updateValue();
 
         Pane root = new Pane(canvas, tippButton, actualValueLabel, valueLabel, nodesLabel,
-                timerLabel, timerTitleLabel, messageLabel);
+                timerLabel, timerTitleLabel, messageTitleLabel, messageLabel);
         Scene scene = new Scene(root, WIDTH, HEIGHT);
 
         primaryStage.setTitle("Steinerbaum");
@@ -137,8 +138,7 @@ public class SteinerTree extends Application {
         nodesLabel.setLayoutX(170);
         nodesLabel.setLayoutY(20);
 
-        timerTitleLabel = new Label();
-        timerTitleLabel.setText("Zeit: ");
+        timerTitleLabel = new Label("Zeit: ");
         timerTitleLabel.setLayoutX(170);
         timerTitleLabel.setLayoutY(60);
 
@@ -146,13 +146,19 @@ public class SteinerTree extends Application {
         timerLabel.setLayoutX(200);
         timerLabel.setLayoutY(60);
 
+        messageTitleLabel = new Label("Hinweis: ");
+        messageTitleLabel.setLayoutX(800);
+        messageTitleLabel.setLayoutY(20);
+
         messageLabel = new Label();
+        messageLabel.setLayoutX(850);
+        messageLabel.setLayoutY(20);
 
         tippButton = new Button("Tipp +" + getTimeAdmonition());
         tippButton.setLayoutX(20);
         tippButton.setLayoutY(60);
         tippButton.disableProperty().bind(Bindings.createBooleanBinding(() -> tippOn));
-        
+
     }
 
     /**
@@ -302,10 +308,12 @@ public class SteinerTree extends Application {
             Collections.shuffle(edgesToBeChosen);
             edgesToBeChosen.get(FIRSTEDGE).setTipp(true);
             tippOn = true;
+            messageLabel.setText(Message.ADDEDGE.getMessage());
         } else if (edgesToBeChosen.size() == 0) {
             Collections.shuffle(edgesToBeRemoved);
             edgesToBeRemoved.get(FIRSTEDGE).setTipp(true);
             tippOn = true;
+            messageLabel.setText(Message.REMOVEEDGE.getMessage());
         }
 
         // set tipp button text
