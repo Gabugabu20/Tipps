@@ -12,6 +12,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
@@ -23,13 +24,23 @@ import model.Node;
 import model.Section;
 
 public class SteinerTree extends Application {
+    private GraphicsContext gc;
+    // GUI Elements
+    // Labels
+    private Label actualValueLabel;
+    private Label valueLabel;
+    private Label nodesLabel;
+    private Label timerLabel;
+    // Buttons
+    private Button tippButton;
+
     private ArrayList<Node> nodes;
     private ArrayList<Edge> edges;
     private ArrayList<Edge> solution;
     private ArrayList<Section> tippSections;
 
+    // Timer
     private Timeline timeline;
-    private Label timerLabel = new Label();
     private long startTime;
 
     private long timeToAdd;
@@ -46,23 +57,9 @@ public class SteinerTree extends Application {
     public void start(Stage primaryStage) {
         Canvas canvas = new Canvas(600, 600);
 
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-
-        Label label1 = new Label("Aktueller Wert:");
-        label1.setLayoutX(150);
-        label1.setLayoutY(20);
-
-        Label valueLabel = new Label();
-        valueLabel.setLayoutX(250);
-        valueLabel.setLayoutY(20);
-
-        Label nodesLabel = new Label("Diese Knoten zusammen verbinden: 1, 4, 8, 12, 13");
-        nodesLabel.setLayoutX(150);
-        nodesLabel.setLayoutY(50);
-
-        timerLabel = new Label();
-        timerLabel.setLayoutX(200);
-        timerLabel.setLayoutY(100);
+        gc = canvas.getGraphicsContext2D();
+        // initializes all GUI elements like labels and buttons
+        initializeGUIElements();
 
         Button halfTippButton = new Button("Halb Tipp");
         halfTippButton.setLayoutX(20);
@@ -108,7 +105,7 @@ public class SteinerTree extends Application {
             }
 
             // NEW
-            if(this.tippEdge != null){
+            if (this.tippEdge != null) {
                 Random random = new Random();
                 int num = random.nextInt(0, wrongEdges.size());
                 wrongEdges.get(num);
@@ -343,60 +340,7 @@ public class SteinerTree extends Application {
         timeline.setCycleCount(Timeline.INDEFINITE);
 
         // click on edge
-        canvas.setOnMouseClicked(event -> {
-            double mouseX = event.getX();
-            double mouseY = event.getY();
-
-            // set edge color
-            gc.setStroke(Color.BLACK);
-            gc.setLineWidth(3);
-
-            // edges
-            for (Edge edge : edges) {
-                int fromNodeIndex = edge.getNode1().getNumber() - 1;
-                int toNodeIndex = edge.getNode2().getNumber() - 1;
-                double fromX = nodes.get(fromNodeIndex).getX();
-                double fromY = nodes.get(fromNodeIndex).getY();
-                double toX = nodes.get(toNodeIndex).getX();
-                double toY = nodes.get(toNodeIndex).getY();
-
-                double distance = distanceToLineSegment(mouseX, mouseY, fromX, fromY, toX, toY);
-
-                if (distance < 5) {
-                    edge.setSelected(!edge.isSelected());
-                    if (edge.isSelected()) {
-                        checkSolution(edge);
-                    }
-                    if (this.checkFinish(edges)) {
-                        gc.clearRect(0, 0, 600, 600);
-                        Label finishLabel = new Label("Your Score: " + this.timerLabel.getText());
-                        finishLabel.setLayoutX(270);
-                        finishLabel.setLayoutY(300);
-                        Pane root = new Pane(finishLabel);
-                        Scene scene = new Scene(root, 600, 600);
-
-                        primaryStage.setTitle("Steinerbaum");
-                        primaryStage.setScene(scene);
-                        primaryStage.show();
-                    } else {
-
-                    }
-                    break;
-                }
-            }
-
-            redrawCanvas(gc);
-
-            // set value
-            int totalValue = 0;
-            for (Edge edge : edges) {
-                if (edge.isSelected()) {
-                    totalValue += edge.getValue();
-                }
-            }
-            valueLabel.setText(Integer.toString(totalValue));
-
-        });
+        canvas.setOnMouseClicked(event -> handleEdgeClick(event, primaryStage));
 
         // set edge color
         gc.setStroke(Color.BLACK);
@@ -465,7 +409,8 @@ public class SteinerTree extends Application {
         startTime = System.currentTimeMillis();
         timeline.play();
 
-        Pane root = new Pane(canvas, quarterTippButton, halfTippButton, label1, valueLabel, nodesLabel, timerLabel);
+        Pane root = new Pane(canvas, quarterTippButton, halfTippButton, actualValueLabel, valueLabel, nodesLabel,
+                timerLabel);
         Scene scene = new Scene(root, 600, 600);
 
         primaryStage.setTitle("Steinerbaum");
@@ -556,6 +501,79 @@ public class SteinerTree extends Application {
             return true;
         }
         return false;
+    }
+
+    private void initializeGUIElements() {
+        actualValueLabel = new Label("Aktueller Wert:");
+        actualValueLabel.setLayoutX(150);
+        actualValueLabel.setLayoutY(20);
+
+        valueLabel = new Label();
+        valueLabel.setLayoutX(250);
+        valueLabel.setLayoutY(20);
+
+        nodesLabel = new Label("Diese Knoten zusammen verbinden: 1, 4, 8, 12, 13");
+        nodesLabel.setLayoutX(150);
+        nodesLabel.setLayoutY(50);
+
+        timerLabel = new Label();
+        timerLabel.setLayoutX(200);
+        timerLabel.setLayoutY(100);
+    }
+
+    private void handleEdgeClick(MouseEvent event, Stage primaryStage){
+        double mouseX = event.getX();
+            double mouseY = event.getY();
+
+            // set edge color
+            gc.setStroke(Color.BLACK);
+            gc.setLineWidth(3);
+
+            // edges
+            for (Edge edge : edges) {
+                int fromNodeIndex = edge.getNode1().getNumber() - 1;
+                int toNodeIndex = edge.getNode2().getNumber() - 1;
+                double fromX = nodes.get(fromNodeIndex).getX();
+                double fromY = nodes.get(fromNodeIndex).getY();
+                double toX = nodes.get(toNodeIndex).getX();
+                double toY = nodes.get(toNodeIndex).getY();
+
+                double distance = distanceToLineSegment(mouseX, mouseY, fromX, fromY, toX, toY);
+
+                if (distance < 5) {
+                    edge.setSelected(!edge.isSelected());
+                    if (edge.isSelected()) {
+                        checkSolution(edge);
+                    }
+                    if (this.checkFinish(edges)) {
+                        gc.clearRect(0, 0, 600, 600);
+                        Label finishLabel = new Label("Your Score: " + this.timerLabel.getText());
+                        finishLabel.setLayoutX(270);
+                        finishLabel.setLayoutY(300);
+                        Pane root = new Pane(finishLabel);
+                        Scene scene = new Scene(root, 600, 600);
+
+                        primaryStage.setTitle("Steinerbaum");
+                        primaryStage.setScene(scene);
+                        primaryStage.show();
+                    } else {
+
+                    }
+                    break;
+                }
+            }
+
+            redrawCanvas(gc);
+
+            // set value
+            int totalValue = 0;
+            for (Edge edge : edges) {
+                if (edge.isSelected()) {
+                    totalValue += edge.getValue();
+                }
+            }
+            valueLabel.setText(Integer.toString(totalValue));
+
     }
 
     private double distanceToLineSegment(double x, double y, double x1, double y1, double x2, double y2) {
