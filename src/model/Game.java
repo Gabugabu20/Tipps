@@ -45,6 +45,7 @@ public class Game {
             edges.add(new Edge(i + 1, nodes.get(node1 - 1), nodes.get(node2 - 1), value));
         }
 
+        // print all edges
         // for (Edge edge : edges) {
         // System.out.println(edge.toString());
         // }

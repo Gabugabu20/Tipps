@@ -1,6 +1,5 @@
 package view;
 
-import java.security.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -8,6 +7,7 @@ import java.util.Collections;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -55,6 +55,7 @@ public class SteinerTree extends Application {
     private long startTime;
     private long timeToAdd = 0;
     private long timeAdmonition = 15;
+    private boolean tippOn = false;
 
     // Canvas size
     private final int WIDTH = 1200;
@@ -140,6 +141,7 @@ public class SteinerTree extends Application {
         tippButton = new Button("Tipp +" + getTimeAdmonition());
         tippButton.setLayoutX(20);
         tippButton.setLayoutY(60);
+        tippButton.disableProperty().bind(Bindings.createBooleanBinding(() -> tippOn));
     }
 
     /**
@@ -206,6 +208,8 @@ public class SteinerTree extends Application {
             gc.fillText(Integer.toString(nodes.get(i).getNumber()), x - 5, y + 8);
             gc.setFill(Color.BLACK);
         }
+
+        tippButton.disableProperty().bind(Bindings.createBooleanBinding(() -> tippOn));
     }
 
     /**
@@ -231,6 +235,9 @@ public class SteinerTree extends Application {
             double distance = distanceToLineSegment(mouseX, mouseY, fromX, fromY, toX, toY);
 
             if (distance < 5) {
+                // removes the tipp
+                removeTipp();
+
                 edge.setSelected(!edge.isSelected());
                 if (edge.isSelected()) {
                     checkSolution(edge);
@@ -242,8 +249,6 @@ public class SteinerTree extends Application {
             }
         }
 
-        // removes the tipp
-        removeTipp();
         // redraws canvas
         drawCanvas();
         // update value
@@ -259,6 +264,7 @@ public class SteinerTree extends Application {
      */
     private void handleTippButtonPressed(ActionEvent event) {
         final int TIMEADMONITIONSUMMAND = 15;
+        final int FIRSTEDGE = 0;
 
         // admonition time
         timeToAdd += timeAdmonition;
@@ -272,11 +278,23 @@ public class SteinerTree extends Application {
             }
         }
 
+        // saves all the edges which needs to be removed
+        ArrayList<Edge> edgesToBeRemoved = new ArrayList<>();
+        for (Edge edge : edges) {
+            if (edge.isSelected() && !solution.contains(edge)) {
+                edgesToBeRemoved.add(edge);
+            }
+        }
+
         // sets an edge that is shown to the player
         if (!edges.stream().anyMatch(obj -> obj.isTipp()) && edgesToBeChosen.size() != 0) {
-            final int FIRSTEDGE = 0;
             Collections.shuffle(edgesToBeChosen);
             edgesToBeChosen.get(FIRSTEDGE).setTipp(true);
+            tippOn = true;
+        } else if (edgesToBeChosen.size() == 0) {
+            Collections.shuffle(edgesToBeRemoved);
+            edgesToBeRemoved.get(FIRSTEDGE).setTipp(true);
+            tippOn = true;
         }
 
         // set tipp button text
@@ -309,6 +327,8 @@ public class SteinerTree extends Application {
                 .filter(obj -> obj.isTipp())
                 .findFirst()
                 .ifPresent(obj -> obj.setTipp(false));
+
+        tippOn = false;
     }
 
     /**
@@ -420,6 +440,11 @@ public class SteinerTree extends Application {
         return distance;
     }
 
+    /**
+     * 
+     * Returns the time admonition formatted as Xm Ys.
+     * For example: 1m 30s
+     */
     private String getTimeAdmonition() {
         long minutes = timeAdmonition / 60;
         long seconds = timeAdmonition % 60;

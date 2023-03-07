@@ -1,7 +1,5 @@
 package model;
 
-import java.util.ArrayList;
-
 public class Edge {
     private int id;
     private boolean selected;
