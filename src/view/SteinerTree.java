@@ -16,6 +16,8 @@ import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -49,6 +51,7 @@ public class SteinerTree extends Application {
     // Buttons
     private Button tippButton;
 
+    // nodes and edges from game logic
     private ArrayList<Node> nodes;
     private ArrayList<Edge> edges;
     private ArrayList<Edge> solution;
@@ -113,8 +116,12 @@ public class SteinerTree extends Application {
         // update value
         updateValue();
 
+        // set font size and boldness for the root pane
+        Font font = Font.font("Arial", FontWeight.BOLD, 20);
         Pane root = new Pane(canvas, tippButton, actualValueLabel, valueLabel, nodesLabel,
                 timerLabel, timerTitleLabel, messageTitleLabel, messageLabel);
+        root.setStyle("-fx-font: " + font.getSize() + "px \"" + font.getFamily() + "\";");
+
         Scene scene = new Scene(root, WIDTH, HEIGHT);
 
         primaryStage.setTitle("Steinerbaum");
@@ -132,32 +139,32 @@ public class SteinerTree extends Application {
         actualValueLabel.setLayoutY(20);
 
         valueLabel = new Label();
-        valueLabel.setLayoutX(110);
+        valueLabel.setLayoutX(160);
         valueLabel.setLayoutY(20);
 
         nodesLabel = new Label("Diese Knoten zusammen verbinden: 1, 4, 8, 12, 13");
-        nodesLabel.setLayoutX(170);
-        nodesLabel.setLayoutY(20);
+        nodesLabel.setLayoutX(250);
+        nodesLabel.setLayoutY(60);
 
         timerTitleLabel = new Label("Zeit: ");
-        timerTitleLabel.setLayoutX(170);
-        timerTitleLabel.setLayoutY(60);
+        timerTitleLabel.setLayoutX(250);
+        timerTitleLabel.setLayoutY(20);
 
         timerLabel = new Label();
-        timerLabel.setLayoutX(200);
-        timerLabel.setLayoutY(60);
+        timerLabel.setLayoutX(300);
+        timerLabel.setLayoutY(20);
 
         messageTitleLabel = new Label("Hinweis: ");
-        messageTitleLabel.setLayoutX(800);
-        messageTitleLabel.setLayoutY(20);
+        messageTitleLabel.setLayoutX(250);
+        messageTitleLabel.setLayoutY(100);
 
         messageLabel = new Label();
-        messageLabel.setLayoutX(850);
-        messageLabel.setLayoutY(20);
+        messageLabel.setLayoutX(340);
+        messageLabel.setLayoutY(100);
 
         tippButton = new Button("Tipp +" + getTimeAdmonition());
         tippButton.setLayoutX(20);
-        tippButton.setLayoutY(60);
+        tippButton.setLayoutY(80);
         tippButton.disableProperty().bind(Bindings.createBooleanBinding(() -> tippOn));
 
     }
@@ -387,8 +394,8 @@ public class SteinerTree extends Application {
         gc.clearRect(0, 0, WIDTH, HEIGHT);
 
         finishLabel = new Label("Your Score: " + this.timerLabel.getText());
-        finishLabel.setLayoutX(WIDTH/2);
-        finishLabel.setLayoutY(HEIGHT/2);
+        finishLabel.setLayoutX(WIDTH / 2);
+        finishLabel.setLayoutY(HEIGHT / 2);
 
         Pane root = new Pane(finishLabel);
         Scene scene = new Scene(root, WIDTH, HEIGHT);
