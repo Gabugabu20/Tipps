@@ -15,7 +15,6 @@ public class Game {
         instanceNodes();
         instanceEdges();
         instanceLevels();
-        // setSolution();
     }
 
     private void instanceNodes() {
@@ -74,7 +73,7 @@ public class Game {
     private void instanceLevels() {
         final int NUMBEROFLEVELS = 1;
         for (int i = 0; i < NUMBEROFLEVELS; i++) {
-            levels.add(new TextFileReader().loadTextFile(String.format("level%d", i+1)));
+            levels.add(new TextFileReader().loadTextFile(String.format("level%d", i + 1)));
         }
 
         for (String[] level : levels) {
@@ -93,18 +92,6 @@ public class Game {
                 }
             }
         }
-    }
-
-    private void setSolution() {
-
-        solution.add(edges.get(1));
-        solution.add(edges.get(6));
-        solution.add(edges.get(9));
-        solution.add(edges.get(14));
-        solution.add(edges.get(16));
-        solution.add(edges.get(17));
-        solution.add(edges.get(20));
-        solution.add(edges.get(18));
     }
 
     public ArrayList<Node> getNodes() {
