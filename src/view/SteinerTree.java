@@ -2,6 +2,7 @@ package view;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.stream.Collectors;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -131,7 +132,7 @@ public class SteinerTree extends Application {
         valueLabel.setLayoutX(160);
         valueLabel.setLayoutY(20);
 
-        nodesLabel = new Label("Diese Knoten zusammen verbinden: 1, 4, 8, 12, 13");
+        nodesLabel = new Label();
         nodesLabel.setLayoutX(250);
         nodesLabel.setLayoutY(60);
 
@@ -191,6 +192,9 @@ public class SteinerTree extends Application {
         for (Edge edge : edges) {
             edge.setSelected(false);
         }
+
+        nodesLabel.setText("Diese Knoten zusammen verbinden: "
+                + nodesToConnect.stream().sorted().map(Object::toString).collect(Collectors.joining(", ")) + ".");
 
         // draw canvas
         drawCanvas();
