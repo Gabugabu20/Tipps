@@ -6,10 +6,12 @@ public class Game {
     private ArrayList<Node> nodes = new ArrayList<>();
     private ArrayList<Edge> edges = new ArrayList<>();
 
-    private ArrayList<Integer> nodesToConnect = new ArrayList<>();
-    private ArrayList<Edge> solution = new ArrayList<>();
+    private ArrayList<ArrayList<Integer>> nodesToConnect = new ArrayList<>();
+    private ArrayList<ArrayList<Edge>> solution = new ArrayList<>();
 
     private ArrayList<String[]> levels = new ArrayList<>();
+
+    private final int NUMBEROFLEVELS = 3;
 
     public void instanceGame() {
         instanceNodes();
@@ -71,26 +73,29 @@ public class Game {
     }
 
     private void instanceLevels() {
-        final int NUMBEROFLEVELS = 1;
         for (int i = 0; i < NUMBEROFLEVELS; i++) {
             levels.add(new TextFileReader().loadTextFile(String.format("level%d", i + 1)));
         }
 
         for (String[] level : levels) {
             boolean nodesIndezes = true;
+            ArrayList<Integer> levelNodesToConnect = new ArrayList<>();
+            ArrayList<Edge> levelSolution = new ArrayList<>();
             for (int i = 0; i < level.length; i++) {
                 String line = level[i];
 
                 if (!line.equals("-")) {
                     if (nodesIndezes) {
-                        nodesToConnect.add(Integer.parseInt(line));
+                        levelNodesToConnect.add(Integer.parseInt(line));
                     } else {
-                        solution.add(edges.get(Integer.parseInt(line)));
+                        levelSolution.add(edges.get(Integer.parseInt(line)));
                     }
                 } else {
                     nodesIndezes = false;
                 }
             }
+            nodesToConnect.add(levelNodesToConnect);
+            solution.add(levelSolution);
         }
     }
 
@@ -102,16 +107,19 @@ public class Game {
         return edges;
     }
 
-    public ArrayList<Edge> getSolution() {
-        return solution;
+    public ArrayList<Edge> getSolution(int level) {
+        return solution.get(level - 1);
     }
 
-    public ArrayList<Integer> getNodesToConnect() {
-        return nodesToConnect;
+    public ArrayList<Integer> getNodesToConnect(int level) {
+        return nodesToConnect.get(level - 1);
     }
 
     public ArrayList<String[]> getLevels() {
         return levels;
     }
 
+    public int getNumberOfLevels() {
+        return NUMBEROFLEVELS;
+    }
 }

@@ -37,6 +37,8 @@ public class SteinerTree extends Application {
 
     private GraphicsContext gc;
     private Stage primaryStage;
+    private Canvas canvas;
+    private Game game;
 
     // GUI Elements
     // Labels
@@ -50,6 +52,7 @@ public class SteinerTree extends Application {
     private Label messageLabel;
     // Buttons
     private Button tippButton;
+    private Button nextButton;
 
     // nodes and edges from game logic
     private ArrayList<Node> nodes;
@@ -68,11 +71,11 @@ public class SteinerTree extends Application {
     private final int WIDTH = 1200;
     private final int HEIGHT = 800;
 
+    private int currentLevel = 1;
+    private boolean finished = false;
+
     public SteinerTree(Game game) {
-        this.nodes = game.getNodes();
-        this.edges = game.getEdges();
-        this.solution = game.getSolution();
-        this.nodesToConnect = game.getNodesToConnect();
+        this.game = game;
     }
 
     /**
@@ -95,7 +98,7 @@ public class SteinerTree extends Application {
     @Override
     public void start(Stage primaryStage) {
         // initialize canvas and stage
-        Canvas canvas = new Canvas(WIDTH, HEIGHT);
+        canvas = new Canvas(WIDTH, HEIGHT);
         gc = canvas.getGraphicsContext2D();
         this.primaryStage = primaryStage;
 
@@ -105,28 +108,14 @@ public class SteinerTree extends Application {
         // press the tipp button
         tippButton.setOnAction(event -> handleTippButtonPressed(event));
 
+        // press the next button
+        nextButton.setOnAction(event -> handleNextButtonPressed(event));
+
         // click on edge
         canvas.setOnMouseClicked(event -> handleEdgeClick(event));
 
-        // initialize timeline
-        initializeTimer();
-
-        // draw canvas
-        drawCanvas();
-        // update value
-        updateValue();
-
-        // set font size and boldness for the root pane
-        Font font = Font.font("Arial", FontWeight.BOLD, 20);
-        Pane root = new Pane(canvas, tippButton, actualValueLabel, valueLabel, nodesLabel,
-                timerLabel, timerTitleLabel, messageTitleLabel, messageLabel);
-        root.setStyle("-fx-font: " + font.getSize() + "px \"" + font.getFamily() + "\";");
-
-        Scene scene = new Scene(root, WIDTH, HEIGHT);
-
-        primaryStage.setTitle("Steinerbaum");
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        // starts level
+        startLevel(currentLevel);
     }
 
     /**
@@ -167,6 +156,10 @@ public class SteinerTree extends Application {
         tippButton.setLayoutY(80);
         tippButton.disableProperty().bind(Bindings.createBooleanBinding(() -> tippOn));
 
+        nextButton = new Button("Nächster Level");
+        nextButton.setLayoutX(WIDTH / 2);
+        nextButton.setLayoutY(HEIGHT / 3);
+        nextButton.disableProperty().bind(Bindings.createBooleanBinding(() -> finished));
     }
 
     /**
@@ -178,6 +171,43 @@ public class SteinerTree extends Application {
         timeline.setCycleCount(Timeline.INDEFINITE);
         startTime = System.currentTimeMillis();
         timeline.play();
+
+        timeToAdd = 0;
+        timeAdmonition = 15;
+        // set tipp button text
+        tippButton.setText("Tipp +" + getTimeAdmonition());
+    }
+
+    private void startLevel(int currentLevel) {
+        // set nodes, edges, solution and nodes to be connected for the game
+        this.nodes = game.getNodes();
+        this.edges = game.getEdges();
+        this.solution = game.getSolution(currentLevel);
+        this.nodesToConnect = game.getNodesToConnect(currentLevel);
+
+        // initialize timeline
+        initializeTimer();
+
+        for (Edge edge : edges) {
+            edge.setSelected(false);
+        }
+
+        // draw canvas
+        drawCanvas();
+        // update value
+        updateValue();
+
+        // set font size and boldness for the root pane
+        Font font = Font.font("Arial", FontWeight.BOLD, 20);
+        Pane root = new Pane(canvas, tippButton, actualValueLabel, valueLabel, nodesLabel,
+                timerLabel, timerTitleLabel, messageTitleLabel, messageLabel);
+        root.setStyle("-fx-font: " + font.getSize() + "px \"" + font.getFamily() + "\";");
+
+        Scene scene = new Scene(root, WIDTH, HEIGHT);
+
+        primaryStage.setTitle("Steinerbaum");
+        primaryStage.setScene(scene);
+        primaryStage.show();
     }
 
     /**
@@ -332,6 +362,11 @@ public class SteinerTree extends Application {
         updateValue();
     }
 
+    private void handleNextButtonPressed(ActionEvent event) {
+        currentLevel++;
+        startLevel(currentLevel);
+    }
+
     /**
      * 
      * Checks whether the given edge is part of the solution or not.
@@ -397,7 +432,13 @@ public class SteinerTree extends Application {
         finishLabel.setLayoutX(WIDTH / 2);
         finishLabel.setLayoutY(HEIGHT / 2);
 
-        Pane root = new Pane(finishLabel);
+        Pane root = new Pane();
+
+        if (new Game().getNumberOfLevels() == currentLevel) {
+            root = new Pane(finishLabel);
+        } else {
+            root = new Pane(finishLabel, nextButton);
+        }
         Scene scene = new Scene(root, WIDTH, HEIGHT);
 
         primaryStage.setTitle("Steinerbaum");
