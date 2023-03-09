@@ -2,6 +2,12 @@ package view;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Stack;
 import java.util.stream.Collectors;
 
 import javafx.animation.KeyFrame;
@@ -307,6 +313,12 @@ public class SteinerTree extends Application {
             }
         }
 
+        if (hasCycle()) {
+            messageLabel.setText(Message.KREIS.getMessage());
+        } else if (!hasCycle() && messageLabel.getText().equals(Message.KREIS.getMessage())) {
+            messageLabel.setText("");
+        }
+
         // redraws canvas
         drawCanvas();
         // update value
@@ -522,4 +534,77 @@ public class SteinerTree extends Application {
         long seconds = timeAdmonition % 60;
         return String.format("%dm %ds", minutes, seconds);
     }
+
+    /**
+     * 
+     * Checks if the selected edges in the graph form a cycle.
+     * 
+     * @return true if a cycle is formed, false otherwise
+     */
+    private boolean hasCycle() {
+        // Create an adjacency list to store the nodes and their neighbors
+        Map<Node, List<Node>> adjList = new HashMap<>();
+
+        // Create a list of selected edges
+        List<Edge> selectedEdges = new ArrayList<>();
+        for (Edge edge : edges) {
+            if (edge.isSelected()) {
+                selectedEdges.add(edge);
+            }
+        }
+
+        // If there are less than 2 selected edges, no cycle can be formed
+        if (selectedEdges.size() < 2) {
+            return false;
+        }
+
+        // Create the adjacency list by adding the nodes and their neighbors from the
+        // selected edges
+        for (Edge edge : selectedEdges) {
+            Node node1 = edge.getNode1();
+            Node node2 = edge.getNode2();
+            if (!adjList.containsKey(node1)) {
+                adjList.put(node1, new ArrayList<>());
+            }
+            if (!adjList.containsKey(node2)) {
+                adjList.put(node2, new ArrayList<>());
+            }
+            adjList.get(node1).add(node2);
+            adjList.get(node2).add(node1);
+        }
+
+        // Create a set to keep track of visited nodes and a map to keep track of their
+        // parent node in the DFS tree
+        Set<Node> visited = new HashSet<>();
+        Map<Node, Node> parent = new HashMap<>();
+
+        // Create a stack to perform depth-first search starting from the first node in
+        // the first selected edge
+        Stack<Node> stack = new Stack<>();
+        Node startNode = selectedEdges.get(0).getNode1();
+        stack.push(startNode);
+        parent.put(startNode, null);
+        while (!stack.empty()) {
+            Node currNode = stack.pop();
+            visited.add(currNode);
+            List<Node> neighbors = adjList.get(currNode);
+            for (Node neighbor : neighbors) {
+                // If the neighbor node has not been visited, add it to the stack and set its
+                // parent to the current node
+                if (!visited.contains(neighbor)) {
+                    stack.push(neighbor);
+                    parent.put(neighbor, currNode);
+                }
+                // If the neighbor node has been visited and it is not the parent of the current
+                // node, a cycle is formed
+                else if (parent.get(currNode) != neighbor) {
+                    return true;
+                }
+            }
+        }
+
+        // No cycle is formed
+        return false;
+    }
+
 }
