@@ -18,5 +18,4 @@ public class App extends Application {
         SteinerTree steinerTree = new SteinerTree(game);
         steinerTree.start(primaryStage);
     }
-
 }

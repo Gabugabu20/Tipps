@@ -49,7 +49,7 @@ public class SteinerTree extends Application {
 
     // GUI Elements
     // Labels
-    private Label actualValueLabel;
+    private Label valueTitleLabel;
     private Label valueLabel;
     private Label nodesLabel;
     private Label timerTitleLabel;
@@ -57,6 +57,8 @@ public class SteinerTree extends Application {
     private Label finishLabel;
     private Label messageTitleLabel;
     private Label messageLabel;
+    private Label tempValueTitleLabel;
+    private Label tempValueLabel;
     // Buttons
     private Button tippButton;
     private Button nextButton;
@@ -130,9 +132,9 @@ public class SteinerTree extends Application {
      * Initializes all the GUI elements like labels and buttons.
      */
     private void initializeGUIElements() {
-        actualValueLabel = new Label("Aktueller Wert:");
-        actualValueLabel.setLayoutX(20);
-        actualValueLabel.setLayoutY(20);
+        valueTitleLabel = new Label("Aktueller Wert:");
+        valueTitleLabel.setLayoutX(20);
+        valueTitleLabel.setLayoutY(20);
 
         valueLabel = new Label();
         valueLabel.setLayoutX(160);
@@ -157,6 +159,14 @@ public class SteinerTree extends Application {
         messageLabel = new Label();
         messageLabel.setLayoutX(340);
         messageLabel.setLayoutY(100);
+
+        tempValueTitleLabel = new Label("History:");
+        tempValueTitleLabel.setLayoutX(20);
+        tempValueTitleLabel.setLayoutY(50);
+
+        tempValueLabel = new Label();
+        tempValueLabel.setLayoutX(100);
+        tempValueLabel.setLayoutY(50);
 
         tippButton = new Button("Tipp +" + getTimeAdmonition());
         tippButton.setLayoutX(20);
@@ -209,8 +219,8 @@ public class SteinerTree extends Application {
 
         // set font size and boldness for the root pane
         Font font = Font.font("Arial", FontWeight.BOLD, 20);
-        Pane root = new Pane(canvas, tippButton, actualValueLabel, valueLabel, nodesLabel,
-                timerLabel, timerTitleLabel, messageTitleLabel, messageLabel);
+        Pane root = new Pane(canvas, tippButton, valueTitleLabel, valueLabel, nodesLabel,
+                timerLabel, timerTitleLabel, messageTitleLabel, tempValueTitleLabel, tempValueLabel);
         root.setStyle("-fx-font: " + font.getSize() + "px \"" + font.getFamily() + "\";");
 
         Scene scene = new Scene(root, WIDTH, HEIGHT);
@@ -305,6 +315,9 @@ public class SteinerTree extends Application {
                 edge.setSelected(!edge.isSelected());
                 if (edge.isSelected()) {
                     checkSolution(edge);
+                    tempValueLabel.setText("+" + edge.getValue());
+                } else {
+                    tempValueLabel.setText("-" + edge.getValue());
                 }
                 if (checkFinish(edges)) {
                     showFinish();
