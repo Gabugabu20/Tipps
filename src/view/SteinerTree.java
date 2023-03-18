@@ -227,53 +227,78 @@ public class SteinerTree extends Application {
     private void drawCanvas() {
         gc.clearRect(0, 0, WIDTH, HEIGHT);
 
-        // set edge color
+        drawEdges();
+        drawNodes();
+
+        tippButton.disableProperty().bind(Bindings.createBooleanBinding(() -> tippOn));
+    }
+
+    /**
+     * 
+     * Draws the edges on the canvas.
+     * Sets the stroke color to BLACK and the line width to 3. Iterates through all
+     * the edges and sets the stroke color to
+     * the color of the edge. Then, it gets the indices of the two nodes of the edge
+     * and the corresponding coordinates.
+     * Finally, it draws the line between the two nodes on the canvas.
+     */
+    private void drawEdges() {
         gc.setStroke(Color.BLACK);
         gc.setLineWidth(3);
 
-        // draw edges
         for (Edge edge : edges) {
+            gc.setStroke(edge.getColor());
             int fromNodeIndex = edge.getNode1().getNumber() - 1;
             int toNodeIndex = edge.getNode2().getNumber() - 1;
             double fromX = nodes.get(fromNodeIndex).getX();
             double fromY = nodes.get(fromNodeIndex).getY();
             double toX = nodes.get(toNodeIndex).getX();
             double toY = nodes.get(toNodeIndex).getY();
-
-            if (edge.isTipp()) {
-                gc.setStroke(Color.ORANGE);
-            } else if (edge.isSelected()) {
-                gc.setStroke(Color.RED);
-            } else {
-                gc.setStroke(Color.BLACK);
-            }
-
             gc.strokeLine(fromX, fromY, toX, toY);
         }
+    }
 
-        // set node color
-        gc.setFill(Color.BLACK);
-        gc.setStroke(Color.BLACK);
+    /**
+     * 
+     * Draws the nodes on the canvas.
+     * Sets the line width to 1. Iterates through all the nodes and sets the fill
+     * color to the color of the node. Then, it
+     * fills an oval with the center at the coordinates of the node on the canvas.
+     * It then strokes the oval and sets the text
+     * color to WHITE. It then adds the text of the node number at the center of the
+     * oval.
+     * 
+     * @param node the node to get the color for
+     * @return the color of the node
+     */
+    private void drawNodes() {
         gc.setLineWidth(1);
 
-        // draw nodes
-        for (int i = 0; i < nodes.size(); i++) {
-            double x = nodes.get(i).getX();
-            double y = nodes.get(i).getY();
-            if (nodesToConnect.contains(nodes.get(i).getNumber())) {
-                gc.setFill(Color.BLUE);
-            } else {
-                gc.setFill(Color.BLACK);
-            }
+        for (Node node : nodes) {
+            double x = node.getX();
+            double y = node.getY();
+            gc.setFill(getNodeColor(node));
             gc.fillOval(x - 15, y - 15, 30, 30);
+            gc.setStroke(Color.BLACK);
             gc.strokeOval(x - 15, y - 15, 30, 30);
             gc.setFill(Color.WHITE);
             gc.setTextAlign(TextAlignment.CENTER);
-            gc.fillText(Integer.toString(nodes.get(i).getNumber()), x - 5, y + 8);
+            gc.fillText(Integer.toString(node.getNumber()), x - 5, y + 8);
             gc.setFill(Color.BLACK);
         }
+    }
 
-        tippButton.disableProperty().bind(Bindings.createBooleanBinding(() -> tippOn));
+    /**
+     * 
+     * Gets the color of the node.
+     * If the node number is in the list of nodes to connect, the color of the node
+     * is BLUE. Otherwise, the color is BLACK.
+     * 
+     * @param node the node to get the color for
+     * @return the color of the node
+     */
+    private Color getNodeColor(Node node) {
+        return nodesToConnect.contains(node.getNumber()) ? Color.BLUE : Color.BLACK;
     }
 
     /**

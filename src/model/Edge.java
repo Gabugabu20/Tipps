@@ -1,5 +1,7 @@
 package model;
 
+import javafx.scene.paint.Color;
+
 public class Edge {
     private int id;
     private boolean selected;
@@ -22,6 +24,16 @@ public class Edge {
         this.solution = solution;
         this.node1 = node1;
         this.node2 = node2;
+    }
+
+    public Color getColor() {
+        if (isTipp()) {
+            return Color.GREEN;
+        } else if (isSelected()) {
+            return Color.RED;
+        } else {
+            return Color.BLACK;
+        }
     }
 
     public boolean isSelected() {
