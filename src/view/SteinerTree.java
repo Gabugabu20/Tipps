@@ -32,6 +32,7 @@ import model.Edge;
 import model.Game;
 import model.Message;
 import model.Node;
+import model.solver.SteinerTreeSolver;
 
 /**
  * 
@@ -186,6 +187,10 @@ public class SteinerTree extends Application {
     }
 
     private void startLevel(int currentLevel) {
+        //test solver
+        var test = new SteinerTreeSolver();
+        System.out.println(test.getSolutionToFile("resources/edges copy.txt"));
+
         // set nodes, edges, solution and nodes to be connected for the game
         this.nodes = game.getNodes();
         this.edges = game.getEdges();
